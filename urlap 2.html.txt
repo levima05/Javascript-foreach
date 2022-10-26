@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regisztrálás</title>
+    <script>
+        var tomb = [];
+        function Ellenoriz() {
+            var rendben = true;
+            var hibauzenetek = document.getElementsByClassName("hiba");
+            for (let i = 0; i < hibauzenetek.length; i++) {
+                hibauzenetek[i].innerHTML = "";
+            }
+            var fnev = document.getElementById("felhasznalonev").value;
+            var hossz = fnev.length;
+            var i = 0;
+            while (i < hossz && isNaN(fnev[i])) i++;
+            if (hossz < 6 || hossz > 12 || i >= hossz) {
+                document.getElementById("fnev_hiba").innerHTML = "Hibás felhasználónév!";
+                rendben = false;
+            }
+
+            var email = document.getElementById("email").value;
+            if (email.indexOf("@") == -1) {
+                document.getElementById("email_hiba").innerHTML = "Hibás email cím!";
+                rendben = false;
+            }
+
+            let j= document.getElementById("jelszo").value;
+            hossz = j.length;
+            let eredmeny = j.match(/[A-Z]/);
+            if (!(hossz >=5 && hossz <= 10 && eredmeny)) {
+                document.getElementById("jelszo_hiba").innerHTML += "Nem megfelelő jelszó!";
+                rendben = false;
+            }
+            if (rendben) {
+                tomb.push([fnev,email,j]);
+                Kiiras();
+            }
+            //return rendben;
+            return false;
+        }
+        function Kiiras(){
+            var e = document.getElementById("tablazat");
+            kimenet = "<table>";
+            for (let i = 0; i < tomb.length; i++) {
+                egysor = "<tr>";
+
+                for (let j = 0; j < tomb[i].length; j++)
+                if (j!=2){
+                    egysor += "<td>" + tomb[i][j] + "</td>";
+                }
+                else {
+                egysor += "<td>";
+                var temp = "";
+                for (let a = 0; a < tomb[i][2].length ; a++) {
+                    temp += "*";
+                }
+                egysor += temp + "</td>"
+            }
+                kimenet += egysor + "</tr>";
+            }
+            e.innerHTML = kimenet + "</table>";
+
+            kimenet = "";
+            for (let i = 0; i < tomb.length; i++) {
+                if (tomb[i][1].endsWith("gmail.com")){
+                    kimenet += tomb[i][0] + ", "
+                }
+            }
+            document.getElementById("gmail").innerHTML = kimenet;
+            JelszoErosseg();
+        }
+        function JelszoErosseg(){
+            var pont = 0;
+            var jelsz = document.getElementById("jelszo").value;
+            var hossz = jelsz.length;
+            var nagybetu = jelsz.match(/[A-Z]/);
+            var nagybetuszam = 0;
+            var szam = jelsz.match(/[0-9]/)
+            var tobbszam = 0;
+            if (hossz >= 10)
+            {
+                pont += 1;
+            }
+            if (nagybetu == true)
+            {
+                pont +=1;
+            }
+            for (let x = 0; x < jelsz.length; i++){
+                if (jelsz[x].match(/[A-Z]/))
+                {
+                    nagybetuszam += 1;
+                }
+            }
+            if (nagybetuszam > 1)
+            {
+                pont += 1;
+            }
+
+            if (szam = true)
+            {
+                pont += 1;
+            }
+            for (let y = 0; y < jelsz.length; i++){
+                if (jelsz[y].match(/[0-9]/))
+                {
+                    tobbszam +=1
+                }
+            if (tobbszam > 1)
+            {
+                pont += 1;
+            }
+            }
+            if (pont > 0 && pont < 3){
+                alert("A jelszó gyenge");
+            }
+            else if (pont > 2 && pont < 5){
+                alert("A jelszó közepes");
+            }
+            else{
+                alert("A jelszó erős");
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <form method="get" onsubmit = "return Ellenoriz();">
+        <label for="felhasznalonev">Felhasználónév: </label>
+        <input type="text" name = "fnev" id = "felhasznalonev">
+        <div id = "fnev_hiba" class = "hiba"></div>
+
+        <label for="email">E-mail: </label>
+        <input type="text" name = "email" id = "email">
+        <div id = "email_hiba" class = "hiba"></div>
+
+        <label for="jelszo">Jelszó: </label>
+        <input type="password" name = "jelszo" id = "jelszo">
+        <div id = "jelszo_hiba" class = "hiba"></div>
+        <input type="submit" value="Regisztrálás">
+    </form>
+    <div id="tablazat"></div>
+    <p id="gmail"></p>
+</body>
+</html>
